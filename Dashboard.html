@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Healthcare Monitoring System Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      color: #004d40;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      background-color: #f2f2f2;
+    }
+    .sidebar {
+      width: 250px;
+      background-color: #01162c;
+      padding-top: 20px;
+      position: fixed;
+      height: 100%;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .sidebar h2 {
+      color: #e3f2fd;
+      margin: 0;
+      font-size: 1.5rem;
+      text-align: center;
+    }
+    .nav-links {
+      width: 100%;
+      list-style: none;
+      padding: 0;
+      margin-top: 20px;
+      text-align: center;
+    }
+    .nav-links li {
+      margin: 60px 0;
+    }
+    .nav-links a {
+      text-decoration: none;
+      color: #e3f2fd;
+      font-size: 1.2rem;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      padding: 10px 0;
+    }
+    .nav-links a i {
+      margin-right: 10px;
+    }
+    .nav-links a:hover {
+      background-color: #006699;
+      color: #ffffff;
+    }
+    .content {
+      margin-left: 270px;
+      padding: 20px;
+      flex: 1;
+      text-align: center;
+    }
+    header {
+      padding: 20px;
+      background-color: #e3f2fd;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      margin-bottom: 20px;
+    }
+    h1 {
+      color: #003366;
+      font-size: 2rem;
+      margin: 0;
+    }
+    .dashboard-container {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 20px;
+      background-color: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      font-size: 1.5rem;
+    }
+    /* Common styles */
+    .value-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 40%;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+    }
+  
+    /* Temperature container - Blue */
+    .temperature-container {
+      background-color: #92e5ce; /* Light blue color */
+    }
+  
+    /* Heart Rate container - Red */
+    .heart-rate-container {
+      background-color: #ebf9a8; /* Light red/orange color */
+    }
+
+    .value-item i {
+      color: red;
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+    .gauge-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 30px;   
+    }
+    .gauge {
+      width: 200px;
+      height: 200px;
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <h2><i class="fas fa-bars"></i> MENU</h2>
+    <ul class="nav-links">
+      <li><a href="Index.html"><i class="fas fa-home"></i> Home</a></li>
+      <li><a href="Dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+      <li><a href="Prediction.html"><i class="fas fa-chart-line"></i> Predictions</a></li>
+      <li><a href="Visualizations.html"><i class="fas fa-chart-pie"></i> Visualizations</a></li>
+    </ul>
+  </div>
+
+  <div class="content">
+    <header>
+      <h1>Remote Healthcare Monitoring</h1>
+    </header>
+
+    <div class="dashboard-container">
+      <!-- Temperature Section -->
+      <div class="value-item temperature-container">
+        <div class="value-title"><i class="fas fa-thermometer-half"></i> Temperature</div>
+        <div class="value"><span id="temperatureValue">N/A</span> °F</div>
+      </div>
+
+      <!-- Heart Rate Section -->
+      <div class="value-item heart-rate-container">
+        <div class="value-title"><i class="fas fa-heartbeat"></i> Heart Rate</div>
+        <div class="value"><span id="bpValue">N/A</span> BPM</div>
+      </div>
+    </div>
+
+    <!-- Gauges Section -->
+    <div class="dashboard-container">
+      <!-- Temperature Gauge -->
+      <div class="gauge-container">
+        <canvas id="tempGauge" class="gauge"></canvas>
+      </div>
+
+      <!-- Heart Rate Gauge -->
+      <div class="gauge-container">
+        <canvas id="bpmGauge" class="gauge"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gaugeJS/dist/gauge.min.js"></script>
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const temperatureValueElement = document.getElementById('temperatureValue');
+      const bpValueElement = document.getElementById('bpValue');
+
+      const THINGSPEAK_CHANNEL_ID = '2725040';
+      const THINGSPEAK_READ_API_KEY = 'NP5TTIM90G5TK188';
+
+      // Initialize the gauges
+      const tempGauge = new Gauge(document.getElementById("tempGauge")).setOptions({
+        angle: 0, 
+        lineWidth: 0.2,
+        radiusScale: 1,
+        pointer: {
+          length: 0.6,
+          strokeWidth: 0.035,
+          color: '#000000'
+        },
+        limitMax: false,
+        limitMin: false,
+        colorStart: '#6FADCF',
+        colorStop: '#8FC0DA',
+        strokeColor: '#E0E0E0',
+        highDpiSupport: true,
+      });
+      tempGauge.maxValue = 150;
+      tempGauge.setMinValue(0);
+      tempGauge.animationSpeed = 32;
+
+      const bpmGauge = new Gauge(document.getElementById("bpmGauge")).setOptions({
+        angle: 0,
+        lineWidth: 0.2,
+        radiusScale: 1,
+        pointer: {
+          length: 0.6,
+          strokeWidth: 0.035,
+          color: '#000000'
+        },
+        limitMax: false,
+        limitMin: false,
+        colorStart: '#6FADCF',
+        colorStop: '#8FC0DA',
+        strokeColor: '#E0E0E0',
+        highDpiSupport: true,
+      });
+      bpmGauge.maxValue = 200;
+      bpmGauge.setMinValue(0);
+      bpmGauge.animationSpeed = 32;
+
+      async function fetchAndUpdateData() {
+        try {
+          const tempResponse = await fetch(`https://api.thingspeak.com/channels/${THINGSPEAK_CHANNEL_ID}/fields/1/last.json?api_key=${THINGSPEAK_READ_API_KEY}`);
+          const tempDataResponse = await tempResponse.json();
+          const currentTemperature = parseFloat(tempDataResponse.field1);
+
+          const bpResponse = await fetch(`https://api.thingspeak.com/channels/${THINGSPEAK_CHANNEL_ID}/fields/2/last.json?api_key=${THINGSPEAK_READ_API_KEY}`);
+          const bpDataResponse = await bpResponse.json();
+          const currentHeartRate = parseFloat(bpDataResponse.field2);
+
+          if (!isNaN(currentTemperature) && !isNaN(currentHeartRate)) {
+            temperatureValueElement.textContent = currentTemperature.toFixed(2);
+            bpValueElement.textContent = currentHeartRate.toFixed(2);
+            tempGauge.set(currentTemperature);
+            bpmGauge.set(currentHeartRate);
+          } else {
+            temperatureValueElement.textContent = 'N/A';
+            bpValueElement.textContent = 'N/A';
+          }
+        } catch (error) {
+          temperatureValueElement.textContent = 'N/A';
+          bpValueElement.textContent = 'N/A';
+        }
+      }
+
+      fetchAndUpdateData();
+      setInterval(fetchAndUpdateData, 3000);
+    });
+  </script>
+</body>
+</html>

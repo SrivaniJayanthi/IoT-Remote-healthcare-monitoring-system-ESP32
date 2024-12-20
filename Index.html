@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Healthcare Monitoring System Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      color: #004d40;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      background-color: #f2f2f2;
+    }
+    .sidebar {
+      width: 250px;
+      background-color: #021b34;
+      padding-top: 20px;
+      position: fixed;
+      height: 100%;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .sidebar h2 {
+      color: #e3f2fd;
+      margin: 0;
+      font-size: 1.5rem;
+      text-align: center;
+    }
+    .nav-links {
+      width: 100%;
+      list-style: none;
+      padding: 0;
+      margin-top: 20px;
+      text-align: center;
+    }
+    .nav-links li {
+      margin: 60px 0;
+    }
+    .nav-links a {
+      text-decoration: none;
+      color: #e3f2fd;
+      font-size: 1.2rem;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      padding: 10px 0;
+    }
+    .nav-links a i {
+      margin-right: 10px;
+    }
+    .nav-links a:hover {
+      background-color: #253c5c;
+      color: #ffffff;
+    }
+    .content {
+      margin-left: 270px; /* Adjusted to fit the sidebar */
+      padding: 20px;
+      flex: 1;
+      text-align: center;
+      background-image: url('2.jpg'); /* Replace with your image URL */
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      height: 100vh; /* Full screen height */
+    }
+    header {
+      padding: 20px;
+      background-color: #e3f2fd;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      margin-bottom: 20px;
+    }
+    h1 {
+      color: #003366;
+      font-size: 2rem;
+      margin: 0;
+    }
+    .animated-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-90%, -150%); /* Center the text */
+      text-align: center;
+    }
+    .animated-text-1 {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-90%, 70%); /* Center the text */
+      text-align: center;
+    }
+    .animated-text span {
+      display: block;
+      opacity: 0;
+    }
+    .animated-text-1 span {
+      display: block;
+      opacity: 0;
+    }
+    .line1 {
+      font-size: 40px;
+      font-weight: bold;
+      animation: appearTopLeft 3s forwards;
+      color: white;
+    }
+
+    .line2-part1 {
+      font-size: 38px;
+      font-weight: bold;
+      margin-top: 20px;
+      animation: fadeInCenter 3s 3s forwards;
+      color: white;
+    }
+
+    .line3 {
+      font-size: 30px;
+      font-weight: normal;
+      margin-top: 20px;
+      opacity: 0;
+      animation: fadeInBottom 3s 6s forwards;
+      color: white;
+    }
+
+    @keyframes appearTopLeft {
+      0% {
+        opacity: 0;
+        transform: translateY(-50px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(-40px); /* Adjusted to be a little above */
+      }
+    }
+
+    @keyframes fadeInCenter {
+      0% {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(-10px); /* Adjusted to be a little above */
+      }
+    }
+
+    @keyframes fadeInBottom {
+      0% {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .dashboard-button {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      text-decoration: none;
+      color: #fff;
+      font-size: 20px;
+      background: linear-gradient(45deg, #007bff, #00c6ff);
+      padding: 12px 20px;
+      border-radius: 30px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      display: inline-flex;
+      align-items: center;
+      transition: all 0.3s;
+    }
+
+    .dashboard-button:hover {
+      background: linear-gradient(45deg, #00c6ff, #007bff);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    .dashboard-button i {
+      margin-right: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <h2>MENU</h2>
+    <ul class="nav-links">
+      <li><a href="Index.html"><i class="fas fa-home"></i> Home</a></li>
+      <li><a href="Dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+      <li><a href="Prediction.html"><i class="fas fa-chart-line"></i> Predictions</a></li>
+      <li><a href="Visualizations.html"><i class="fas fa-chart-pie"></i> Visualizations</a></li>
+    </ul>
+  </div>
+
+  <div class="content">
+
+    <!-- Home Page Animation and Image Section -->
+    <div class="animated-text">
+      <span class="line1">Connected Hearts, No Matter the Miles</span>
+      
+    </div>
+    <div class="animated-text-1">
+        
+        <span class="line2-part1">Welcome to Real Time Healthcare Monitoring System</span>
+      </div>
+
+  </div>
+</body>
+</html>

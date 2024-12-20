@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visualizations - Healthcare Monitoring System</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      color: #004d40;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      background-color: #f2f2f2;
+    }
+    .sidebar {
+      width: 250px;
+      background-color: #01162c;
+      padding-top: 20px;
+      position: fixed;
+      height: 100%;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .sidebar h2 {
+      color: #e3f2fd;
+      margin: 0;
+      font-size: 1.5rem;
+      text-align: center;
+    }
+    .nav-links {
+      width: 100%;
+      list-style: none;
+      padding: 0;
+      margin-top: 20px;
+      text-align: center;
+    }
+    .nav-links li {
+      margin: 60px 0;
+    }
+    .nav-links a {
+      text-decoration: none;
+      color: #e3f2fd;
+      font-size: 1.2rem;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      padding: 10px 0;
+    }
+    .nav-links a i {
+      margin-right: 10px;
+    }
+    .nav-links a:hover {
+      background-color: #006699;
+      color: #ffffff;
+    }
+    .content {
+      margin-left: 270px;
+      padding: 20px;
+      flex: 1;
+      text-align: center;
+    }
+    header {
+      padding: 20px;
+      background-color: #e3f2fd;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      margin-bottom: 20px;
+    }
+    h1 {
+      color: #003366;
+      font-size: 2rem;
+      margin: 0;
+    }
+    .charts-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      margin-top: 20px;
+    }
+    .chart-container {
+      width: 45%;
+      padding: 30px;
+      background-color: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    canvas {
+      width: 100% !important;
+      height: 300px !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <h2><i class="fas fa-bars"></i> MENU</h2>
+    <ul class="nav-links">
+      <li><a href="Index.html"><i class="fas fa-home"></i> Home</a></li>
+      <li><a href="Dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+      <li><a href="Prediction.html"><i class="fas fa-chart-line"></i> Predictions</a></li>
+      <li><a href="Visualizations.html"><i class="fas fa-chart-pie"></i> Visualizations</a></li>
+    </ul>
+  </div>
+
+  <div class="content">
+    <header>
+      <h1>Visualizations</h1>
+    </header>
+
+    <div class="charts-container">
+      <!-- Temperature Line Chart Container -->
+      <div class="chart-container">
+        <h2>Temperature Line Chart</h2>
+        <canvas id="tempLineChart"></canvas>
+      </div>
+
+      <!-- BPM Line Chart Container -->
+      <div class="chart-container">
+        <h2>BPM Line Chart</h2>
+        <canvas id="bpmLineChart"></canvas>
+      </div>
+    </div>
+
+    <div class="charts-container">
+      <!-- Temperature Pie Chart Container -->
+      <div class="chart-container">
+        <h2>Current Temperature</h2>
+        <canvas id="tempPieChart"></canvas>
+      </div>
+
+      <!-- BPM Pie Chart Container -->
+      <div class="chart-container">
+        <h2>Current BPM</h2>
+        <canvas id="bpmPieChart"></canvas>
+      </div>
+    </div>
+
+    <div class="charts-container">
+      <!-- Temperature Histogram Container -->
+      <div class="chart-container">
+        <h2>Temperature Distribution</h2>
+        <canvas id="tempHistogram"></canvas>
+      </div>
+
+      <!-- BPM Histogram Container -->
+      <div class="chart-container">
+        <h2>BPM Distribution</h2>
+        <canvas id="bpmHistogram"></canvas>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Include Chart.js library -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Script to generate sample data and plot the charts -->
+  <script>
+    // Sample data for Temperature and BPM (Line Charts)
+    const timeLabels = ["00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00"];
+    const tempData = [98.6, 99.1, 98.8, 99.3, 98.7, 99.0, 98.9]; // Temperature data (in Fahrenheit)
+    const bpmData = [75, 78, 72, 70, 74, 77, 73]; // BPM data
+
+    // Simulating current values from ThingSpeak
+    const currentTemp = 99.2;
+    const currentBpm = 76;
+
+    // Add current values to the end of the data arrays
+    timeLabels.push("07:00"); // Add current time (for example "07:00")
+    tempData.push(currentTemp); // Add current temperature
+    bpmData.push(currentBpm); // Add current BPM
+
+    // Temperature Line Chart
+    new Chart(document.getElementById('tempLineChart'), {
+      type: 'line',
+      data: {
+        labels: timeLabels,
+        datasets: [{
+          label: 'Temperature (°F)',
+          data: tempData,
+          borderColor: 'red',
+          backgroundColor: 'rgba(255, 99, 132, 0.2)',
+          fill: true
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: false
+          }
+        }
+      }
+    });
+
+    // BPM Line Chart
+    new Chart(document.getElementById('bpmLineChart'), {
+      type: 'line',
+      data: {
+        labels: timeLabels,
+        datasets: [{
+          label: 'BPM',
+          data: bpmData,
+          borderColor: 'blue',
+          backgroundColor: 'rgba(54, 162, 235, 0.2)',
+          fill: true
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: false
+          }
+        }
+      }
+    });
+
+    // Temperature Pie Chart
+    new Chart(document.getElementById('tempPieChart'), {
+      type: 'pie',
+      data: {
+        datasets: [{
+          data: [currentTemp],
+          backgroundColor: ['#ff6384'],
+        }]
+      },
+      options: {
+        responsive: true
+      }
+    });
+
+    // BPM Pie Chart
+    new Chart(document.getElementById('bpmPieChart'), {
+      type: 'pie',
+      data: {
+        datasets: [{
+          data: [currentBpm],
+          backgroundColor: ['#36a2eb'],
+        }]
+      },
+      options: {
+        responsive: true
+      }
+    });
+
+    // Temperature Histogram
+    new Chart(document.getElementById('tempHistogram'), {
+      type: 'bar',
+      data: {
+        labels: ['98.0-98.5', '98.6-99.0', '99.1-99.5'],
+        datasets: [{
+          label: 'Temperature Distribution',
+          data: [2, 3, 2], // Sample data
+          backgroundColor: 'rgba(255, 99, 132, 0.2)',
+          borderColor: 'red',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+    // BPM Histogram
+    new Chart(document.getElementById('bpmHistogram'), {
+      type: 'bar',
+      data: {
+        labels: ['60-70', '71-80', '81-90'],
+        datasets: [{
+          label: 'BPM Distribution',
+          data: [3, 3, 1], // Sample data
+          backgroundColor: 'rgba(54, 162, 235, 0.2)',
+          borderColor: 'blue',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>
